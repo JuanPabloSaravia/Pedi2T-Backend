@@ -59,6 +59,6 @@ public class UsuarioEntity {
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime fechaCreacion;
-
+    
     // Getters y Setters
 }
