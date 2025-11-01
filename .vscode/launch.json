@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Pedi2tApplication<pedi2t>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.pedi2t.pedi2t.Pedi2tApplication",
+            "projectName": "pedi2t",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
