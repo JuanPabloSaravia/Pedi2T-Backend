@@ -3,8 +3,8 @@ package com.pedi2t.pedi2t.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pedi2t.pedi2t.Entity.UsuarioEntity;
-import com.pedi2t.pedi2t.Repository.UsuarioRepository;
+import com.pedi2t.pedi2t.DTO.UsuarioRegistroDTO;
+import com.pedi2t.pedi2t.Service.UsuarioService;
 
 import jakarta.validation.Valid;
 
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/Pedi2T/")
+@RequestMapping("/Usuarios")
 public class UsuarioController {
 
     @Autowired
-    private UsuarioRepository usuarioRepo;
+    private UsuarioService usuarioService;
 
     @PostMapping("/registrarUsuario")
-    public ResponseEntity<?> registrarUsuario(@RequestBody @Valid UsuarioEntity usuario, BindingResult result) {
+    public ResponseEntity<?> registrarUsuario(@RequestBody @Valid UsuarioRegistroDTO usuarioDTO, BindingResult result) {
         if (result.hasErrors()) {
             // devolver lista de errores 
             List<String> errores = result.getFieldErrors() 
@@ -34,10 +34,10 @@ public class UsuarioController {
                     .toList(); 
             return ResponseEntity.badRequest().body(errores); 
         }
-        if (usuario == null) {
+        if (usuarioDTO == null) {
             return ResponseEntity.badRequest().body("El usuario no puede ser nulo");
         }
-        return ResponseEntity.ok(usuarioRepo.save(usuario));
+        return ResponseEntity.ok(usuarioService.registrarUsuario(usuarioDTO));
     }
     
 }
