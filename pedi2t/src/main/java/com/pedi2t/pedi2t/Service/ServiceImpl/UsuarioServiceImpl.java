@@ -1,5 +1,9 @@
 package com.pedi2t.pedi2t.Service.ServiceImpl;
 
+
+
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -7,8 +11,11 @@ import org.springframework.stereotype.Service;
 import com.pedi2t.pedi2t.DTO.LoginResponseDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioLoginDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioRegistroDTO;
+import com.pedi2t.pedi2t.DTO.UsuarioResponseDTO;
 import com.pedi2t.pedi2t.Entity.UsuarioEntity;
 import com.pedi2t.pedi2t.Repository.UsuarioRepository;
+import com.pedi2t.pedi2t.Repository.DiasPresencialesRepository;
+import com.pedi2t.pedi2t.Entity.DiasPresencialesEntity;
 import com.pedi2t.pedi2t.Service.JwtService;
 import com.pedi2t.pedi2t.Service.UsuarioService;
 
@@ -19,18 +26,24 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioRepository usuarioRepo;  
 
     @Autowired
+    private DiasPresencialesRepository diasPresencialesRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
      
     @Autowired
     private JwtService jwtService; // Dependencia del servicio de JWT
 
     @Override
-    public UsuarioEntity registrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO) {
+    public UsuarioResponseDTO registrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO) {
         if (usuarioRepo.findByEmail(usuarioRegistroDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("El email ya está registrado");
         }
     
     UsuarioEntity usuarioNuevo = new UsuarioEntity();
+
+   
+    
 
         usuarioNuevo.setNombre(usuarioRegistroDTO.getNombre());
         usuarioNuevo.setApellido(usuarioRegistroDTO.getApellido());
@@ -41,7 +54,52 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioNuevo.setTelefono(usuarioRegistroDTO.getTelefono());
         usuarioNuevo.setRol("EMPLEADO");
 
-        return usuarioRepo.save(usuarioNuevo);
+        // Guardar usuario primero para obtener id
+        UsuarioEntity saved = usuarioRepo.save(usuarioNuevo);
+
+        // Procesar días presenciales recibidos en el DTO (array de strings)
+        if (usuarioRegistroDTO.getDiasPresenciales() != null && !usuarioRegistroDTO.getDiasPresenciales().isEmpty()) {
+            DiasPresencialesEntity dias = new DiasPresencialesEntity();
+            dias.setUsuario(saved);
+            // Inicializar en false por defecto
+            dias.setLunes(false);
+            dias.setMartes(false);
+            dias.setMiercoles(false);
+            dias.setJueves(false);
+            dias.setViernes(false);
+
+            for (String d : usuarioRegistroDTO.getDiasPresenciales()) {
+                if (d == null) continue;
+                String lower = d.trim().toLowerCase();
+                switch (lower) {
+                    case "lunes":
+                        dias.setLunes(true);
+                        break;
+                    case "martes":
+                        dias.setMartes(true);
+                        break;
+                    case "miercoles":
+                        dias.setMiercoles(true);
+                        break;
+                    case "jueves":
+                        dias.setJueves(true);
+                        break;
+                    case "viernes":
+                        dias.setViernes(true);
+                        break;
+                    default:
+                        // ignorar valores desconocidos o podríamos lanzar excepción
+                        break;
+                }
+            }
+
+            diasPresencialesRepository.save(dias);
+        }
+         UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
+        usuarioResponseDTO.setId(usuarioNuevo.getId());
+        usuarioResponseDTO.setDiasPresenciales(new ArrayList<>(usuarioRegistroDTO.getDiasPresenciales()));
+
+        return usuarioResponseDTO;
     }
     
 

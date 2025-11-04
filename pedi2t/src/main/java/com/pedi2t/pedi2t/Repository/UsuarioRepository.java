@@ -12,7 +12,6 @@ import com.pedi2t.pedi2t.Entity.UsuarioEntity;
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
 
   Optional<UsuarioEntity> findByEmail(String email);
-
-
+  
 
 }

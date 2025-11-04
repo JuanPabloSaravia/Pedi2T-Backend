@@ -17,18 +17,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/Usuarios")
+@RequestMapping("/usuarios")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
-
-   
 
     @PostMapping("/registrarUsuario")
     public ResponseEntity<?> registrarUsuario(@RequestBody @Valid UsuarioRegistroDTO usuarioDTO, BindingResult result) {

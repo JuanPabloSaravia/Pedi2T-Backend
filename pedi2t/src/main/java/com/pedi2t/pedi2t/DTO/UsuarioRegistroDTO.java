@@ -2,8 +2,11 @@ package com.pedi2t.pedi2t.DTO;
 
 
 
+import java.util.ArrayList;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -46,5 +49,7 @@ public class UsuarioRegistroDTO {
     @Size(min = 5, max = 200, message = "La dirección debe tener entre 5 y 200 caracteres")
     private String direccion;
 
+    @NotEmpty(message = "Debe seleccionar al menos un día presencial")
+    private ArrayList<@NotBlank(message = "El día no puede estar vacío") String> diasPresenciales;
 }
 
