@@ -42,7 +42,7 @@ public class MenuDiaEntity {
     @JoinColumn(
         name = "id_usuario", 
         nullable = false,
-        foreignKey = @ForeignKey(name = "FK_pedidos_usuarios")
+        foreignKey = @ForeignKey(name = "FK_menu_dia_usuarios")
     )
     private UsuarioEntity usuario;
 

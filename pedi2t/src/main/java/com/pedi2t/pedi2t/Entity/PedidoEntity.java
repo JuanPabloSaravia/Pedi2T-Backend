@@ -32,7 +32,7 @@ public class PedidoEntity {
     @JoinColumn(
         name = "id_usuario", 
         nullable = false,
-        foreignKey = @ForeignKey(name = "FK_pedidos_usuarios")
+        foreignKey = @ForeignKey(name = "FK_pedido_usuario")
     )
     private UsuarioEntity usuario;
     
