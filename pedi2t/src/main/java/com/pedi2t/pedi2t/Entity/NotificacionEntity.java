@@ -38,7 +38,7 @@ public class NotificacionEntity {
     @JoinColumn(
         name = "id_usuario", 
         nullable = false,
-        foreignKey = @ForeignKey(name = "FK_pedidos_usuarios")
+        foreignKey = @ForeignKey(name = "FK_notificacion_usuarios")
     )
     private UsuarioEntity usuario;
 
