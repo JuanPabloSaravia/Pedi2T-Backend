@@ -12,7 +12,9 @@ import com.pedi2t.pedi2t.Repository.MenuPlatosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,8 +30,10 @@ import com.pedi2t.pedi2t.Entity.MenuPlatosEntity;
 import com.pedi2t.pedi2t.Entity.PlatoEntity;
 import com.pedi2t.pedi2t.DTO.PlatoDTO;
 
+
 @RestController
 @RequestMapping("/home")
+@CrossOrigin(origins = "http://localhost:5173")
 public class HomeController {
 
     @Autowired
@@ -46,8 +50,8 @@ public class HomeController {
     @Autowired
     private MenuPlatosRepository menuPlatosRepository;
 
-    @GetMapping
-    public ResponseEntity<HomeMenusResponseDTO> getHomeUpdates(Long usuarioId) {
+    @GetMapping("/{usuarioId}")
+    public ResponseEntity<HomeMenusResponseDTO> getHomeUpdates(@PathVariable Long usuarioId) {
         // Requerimos que se pase el usuarioId para saber qué días configuró
         if (usuarioId == null) {
             return ResponseEntity.badRequest().build();
