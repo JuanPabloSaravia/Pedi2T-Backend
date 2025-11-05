@@ -1,21 +1,15 @@
 package com.pedi2t.pedi2t.DTO; // (Usa tu paquete)
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class LoginResponseDTO {
     
     private String token;
+    private String nombre;
+    private String apellido;
 
-    // Constructor
-    public LoginResponseDTO(String token) {
-        this.token = token;
-    }
-
-    // --- Getter y Setter ---
     
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 }

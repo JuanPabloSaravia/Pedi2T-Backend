@@ -26,12 +26,14 @@ public class UsuarioHomeServiceImpl implements UsuarioHomeService {
 
     @Override
     public UsuarioHomeDTO obtenerDatosHome(Long idUsuario) {
-    
-    @SuppressWarnings("null")
-    Optional<UsuarioEntity> usuarioOpt = usuarioRepo.findById(idUsuario);
-    if (idUsuario == null) {
-        throw new IllegalArgumentException("El idUsuario no puede ser nulo");
-    }
+        if (idUsuario == null) {
+            throw new IllegalArgumentException("El idUsuario no puede ser nulo");
+        }
+
+        Optional<UsuarioEntity> usuarioOpt = usuarioRepo.findById(idUsuario);
+        if (usuarioOpt.isEmpty()) {
+            throw new IllegalArgumentException("Usuario no encontrado para id: " + idUsuario);
+        }
 
         UsuarioEntity usuario = usuarioOpt.get();
 
@@ -39,20 +41,22 @@ public class UsuarioHomeServiceImpl implements UsuarioHomeService {
         List<PlatoEntity> platos = platoRepo.findAll();
 
         // Convertimos los platos a DTOs
-        List<PlatoDTO> platoDTOs = platos.stream()
-                .map(plato -> new PlatoDTO(
-                        plato.getId(),
-                        plato.getNombre(),
-                        plato.getDescripcion(),
-                        plato.getImagenUrl()
-                ))
-                .collect(Collectors.toList());
+    List<PlatoDTO> platoDTOs = platos.stream()
+        .map(plato -> {
+            PlatoDTO dto = new PlatoDTO();
+            dto.setIdPlato(plato.getId());
+            dto.setNombre(plato.getNombre());
+            dto.setDescripcion(plato.getDescripcion());
+            dto.setImagenUrl(plato.getImagenUrl());
+            dto.setCategoria(plato.getCategoria());
+            return dto;
+        })
+        .collect(Collectors.toList());
 
         // DTO del home con los datos del usuario y los platos
         UsuarioHomeDTO homeDTO = new UsuarioHomeDTO();
         homeDTO.setId(usuario.getId());
-        homeDTO.setNombre(usuario.getNombre());
-        homeDTO.setApellido(usuario.getApellido());
+        
         homeDTO.setPlatos(platoDTOs);
 
         return homeDTO;

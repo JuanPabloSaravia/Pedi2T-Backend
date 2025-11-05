@@ -118,7 +118,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         String token = jwtService.generateToken(usuario.getEmail());
 
         // 4. Devolver el DTO de respuesta con el token
-        return new LoginResponseDTO(token);
+        LoginResponseDTO responseDTO = new LoginResponseDTO();
+        responseDTO.setToken(token);
+        responseDTO.setNombre(usuario.getNombre());
+        responseDTO.setApellido(usuario.getApellido());
+        return responseDTO;
     }
-
 }
