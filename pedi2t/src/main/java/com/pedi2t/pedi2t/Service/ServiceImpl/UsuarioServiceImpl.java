@@ -1,7 +1,5 @@
 package com.pedi2t.pedi2t.Service.ServiceImpl;
 
-
-
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +21,14 @@ import com.pedi2t.pedi2t.Service.UsuarioService;
 public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
-    private UsuarioRepository usuarioRepo;  
+    private UsuarioRepository usuarioRepo;
 
     @Autowired
     private DiasPresencialesRepository diasPresencialesRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-     
+
     @Autowired
     private JwtService jwtService; // Dependencia del servicio de JWT
 
@@ -39,11 +37,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuarioRepo.findByEmail(usuarioRegistroDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("El email ya está registrado");
         }
-    
-    UsuarioEntity usuarioNuevo = new UsuarioEntity();
 
-   
-    
+        UsuarioEntity usuarioNuevo = new UsuarioEntity();
 
         usuarioNuevo.setNombre(usuarioRegistroDTO.getNombre());
         usuarioNuevo.setApellido(usuarioRegistroDTO.getApellido());
@@ -69,7 +64,8 @@ public class UsuarioServiceImpl implements UsuarioService {
             dias.setViernes(false);
 
             for (String d : usuarioRegistroDTO.getDiasPresenciales()) {
-                if (d == null) continue;
+                if (d == null)
+                    continue;
                 String lower = d.trim().toLowerCase();
                 switch (lower) {
                     case "lunes":
@@ -95,13 +91,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 
             diasPresencialesRepository.save(dias);
         }
-         UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
+        UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO();
         usuarioResponseDTO.setId(usuarioNuevo.getId());
         usuarioResponseDTO.setDiasPresenciales(new ArrayList<>(usuarioRegistroDTO.getDiasPresenciales()));
 
         return usuarioResponseDTO;
     }
-    
 
     @Override
     public LoginResponseDTO login(UsuarioLoginDTO loginDTO) {
@@ -119,6 +114,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         // 4. Devolver el DTO de respuesta con el token
         LoginResponseDTO responseDTO = new LoginResponseDTO();
+        responseDTO.setId(usuario.getId());
         responseDTO.setToken(token);
         responseDTO.setNombre(usuario.getNombre());
         responseDTO.setApellido(usuario.getApellido());
