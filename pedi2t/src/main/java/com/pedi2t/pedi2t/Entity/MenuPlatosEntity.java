@@ -23,7 +23,7 @@ public class MenuPlatosEntity {
     @Column(name = "id")
     private Long id;
 
-    @NotNull(message = "El pedido debe estar asociado a un usuario")
+    @NotNull(message = "El pedido debe estar asociado a un plato")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "id_plato", 
@@ -32,7 +32,7 @@ public class MenuPlatosEntity {
     )
     private PlatoEntity plato;
 
-    @NotNull(message = "El pedido debe estar asociado a un usuario")
+    @NotNull(message = "El pedido debe estar asociado a un menú del día")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "id_menu_dia", 

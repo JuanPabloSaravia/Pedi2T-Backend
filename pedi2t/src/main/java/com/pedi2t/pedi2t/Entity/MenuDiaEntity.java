@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.pedi2t.pedi2t.Enum.DiaSemana;
+
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -40,9 +40,9 @@ public class MenuDiaEntity {
     private Integer stockTotal;
 
     @NotNull(message = "El día de la semana no puede ser nulo")
-    @Enumerated(EnumType.STRING)
+    @Pattern(regexp = "^(LUNES|MARTES|MIERCOLES|JUEVES|VIERNES)$", message = "El día de la semana debe ser LUNES, MARTES, MIERCOLES, JUEVES o VIERNES")
     @Column(name = "dia_semana", nullable = false)
-    private DiaSemana diaSemana;
+    private String diaSemana;
 
     @NotNull(message = "El pedido debe estar asociado a un usuario")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,6 +51,6 @@ public class MenuDiaEntity {
         nullable = false,
         foreignKey = @ForeignKey(name = "FK_menu_dia_usuarios")
     )
+    
     private UsuarioEntity usuario;
-
 }
