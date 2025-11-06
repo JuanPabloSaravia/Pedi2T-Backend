@@ -30,3 +30,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment Variables ###
+.env
+.env.local
+.env.production
+.env.staging
+
+### Cloudinary ###
+# No subir credenciales de Cloudinary
+cloudinary.properties

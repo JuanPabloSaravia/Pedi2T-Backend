@@ -1,4 +1,4 @@
-package com.pedi2t.pedi2t.Service.ServiceImpl;
+package com.pedi2t.pedi2t.Service.User.ServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,7 +8,7 @@ import com.pedi2t.pedi2t.Entity.DiasPresencialesEntity;
 import com.pedi2t.pedi2t.Entity.UsuarioEntity;
 import com.pedi2t.pedi2t.Repository.DiasPresencialesRepository;
 import com.pedi2t.pedi2t.Repository.UsuarioRepository;
-import com.pedi2t.pedi2t.Service.DiasPresencialesService;
+import com.pedi2t.pedi2t.Service.User.DiasPresencialesService;
 
 import jakarta.transaction.Transactional;
 

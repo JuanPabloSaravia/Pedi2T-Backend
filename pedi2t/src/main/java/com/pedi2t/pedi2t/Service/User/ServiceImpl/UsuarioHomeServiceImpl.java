@@ -1,4 +1,4 @@
-package com.pedi2t.pedi2t.Service.ServiceImpl;
+package com.pedi2t.pedi2t.Service.User.ServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ import com.pedi2t.pedi2t.Entity.PlatoEntity;
 import com.pedi2t.pedi2t.Entity.UsuarioEntity;
 import com.pedi2t.pedi2t.Repository.PlatoRepository;
 import com.pedi2t.pedi2t.Repository.UsuarioRepository;
-import com.pedi2t.pedi2t.Service.UsuarioHomeService;
+import com.pedi2t.pedi2t.Service.User.UsuarioHomeService;
 
 @Service
 public class UsuarioHomeServiceImpl implements UsuarioHomeService {

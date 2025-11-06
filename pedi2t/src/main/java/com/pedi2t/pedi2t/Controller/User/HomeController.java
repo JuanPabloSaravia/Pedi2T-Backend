@@ -1,4 +1,4 @@
-package com.pedi2t.pedi2t.Controller;
+package com.pedi2t.pedi2t.Controller.User;
 
 
 import com.pedi2t.pedi2t.DTO.HomeMenusResponseDTO;
