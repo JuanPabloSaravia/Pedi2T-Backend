@@ -1,4 +1,4 @@
-package com.pedi2t.pedi2t.Service.ServiceImpl;
+package com.pedi2t.pedi2t.Service.User.ServiceImpl;
 
 import java.util.ArrayList;
 
@@ -12,10 +12,10 @@ import com.pedi2t.pedi2t.DTO.UsuarioRegistroDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioResponseDTO;
 import com.pedi2t.pedi2t.Entity.UsuarioEntity;
 import com.pedi2t.pedi2t.Repository.UsuarioRepository;
+import com.pedi2t.pedi2t.Service.User.JwtService;
+import com.pedi2t.pedi2t.Service.User.UsuarioService;
 import com.pedi2t.pedi2t.Repository.DiasPresencialesRepository;
 import com.pedi2t.pedi2t.Entity.DiasPresencialesEntity;
-import com.pedi2t.pedi2t.Service.JwtService;
-import com.pedi2t.pedi2t.Service.UsuarioService;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -118,6 +118,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         responseDTO.setToken(token);
         responseDTO.setNombre(usuario.getNombre());
         responseDTO.setApellido(usuario.getApellido());
+        responseDTO.setEmail(usuario.getEmail());
+        responseDTO.setDireccion(usuario.getDireccion());
+        responseDTO.setTelefono(usuario.getTelefono());
+        responseDTO.setRol(usuario.getRol());
         return responseDTO;
     }
 }

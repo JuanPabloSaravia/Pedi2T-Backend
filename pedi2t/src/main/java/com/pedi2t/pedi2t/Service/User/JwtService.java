@@ -1,4 +1,4 @@
-package com.pedi2t.pedi2t.Service; // (Usa tu paquete)
+package com.pedi2t.pedi2t.Service.User; // (Usa tu paquete)
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

@@ -1,4 +1,4 @@
-package com.pedi2t.pedi2t.Service;
+package com.pedi2t.pedi2t.Service.User;
 
 import com.pedi2t.pedi2t.DTO.UsuarioHomeDTO;
 

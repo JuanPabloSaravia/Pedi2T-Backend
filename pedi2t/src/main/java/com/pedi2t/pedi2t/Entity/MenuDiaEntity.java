@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.pedi2t.pedi2t.Enum.DiaSemana;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -36,6 +38,11 @@ public class MenuDiaEntity {
     @Min(value = 1, message = "El stock total debe ser al menos 1")
     @Column(name = "stock_total", nullable = false)
     private Integer stockTotal;
+
+    @NotNull(message = "El día de la semana no puede ser nulo")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "dia_semana", nullable = false)
+    private DiaSemana diaSemana;
 
     @NotNull(message = "El pedido debe estar asociado a un usuario")
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,4 +1,4 @@
-package com.pedi2t.pedi2t.Controller;
+package com.pedi2t.pedi2t.Controller.User;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pedi2t.pedi2t.DTO.LoginResponseDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioLoginDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioRegistroDTO;
-
-import com.pedi2t.pedi2t.Service.UsuarioService;
+import com.pedi2t.pedi2t.Service.User.UsuarioService;
 
 import jakarta.validation.Valid;
 
