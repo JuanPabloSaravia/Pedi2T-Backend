@@ -1,16 +1,28 @@
 package com.pedi2t.pedi2t.Service.User.ServiceImpl;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.pedi2t.pedi2t.DTO.LoginResponseDTO;
+import com.pedi2t.pedi2t.DTO.PedidoProximaSemanaDTO;
+import com.pedi2t.pedi2t.DTO.PedidosProximaSemanaResponseDTO;
+import com.pedi2t.pedi2t.DTO.PlatoDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioLoginDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioRegistroDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioResponseDTO;
+import com.pedi2t.pedi2t.Entity.MenuDiaEntity;
+import com.pedi2t.pedi2t.Entity.MenuPlatosEntity;
 import com.pedi2t.pedi2t.Entity.UsuarioEntity;
+import com.pedi2t.pedi2t.Repository.MenuDiaRepository;
+import com.pedi2t.pedi2t.Repository.MenuPlatosRepository;
 import com.pedi2t.pedi2t.Repository.UsuarioRepository;
 import com.pedi2t.pedi2t.Service.User.JwtService;
 import com.pedi2t.pedi2t.Service.User.UsuarioService;
@@ -25,6 +37,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private DiasPresencialesRepository diasPresencialesRepository;
+
+    @Autowired
+    private MenuDiaRepository menuDiaRepository;
+
+    @Autowired
+    private MenuPlatosRepository menuPlatosRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -123,5 +141,74 @@ public class UsuarioServiceImpl implements UsuarioService {
         responseDTO.setTelefono(usuario.getTelefono());
         responseDTO.setRol(usuario.getRol());
         return responseDTO;
+    }
+
+    @Override
+    public PedidosProximaSemanaResponseDTO obtenerPedidosProximaSemana(Long usuarioId) {
+        // Validar que el usuario existe
+        UsuarioEntity usuario = usuarioRepo.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("El usuario no existe"));
+
+        // Obtener la fecha actual
+        LocalDate hoy = LocalDate.now();
+        
+        // Determinar el día de la semana actual
+        DayOfWeek diaActual = hoy.getDayOfWeek();
+        
+        // Calcular el próximo lunes
+        LocalDate proximoLunes;
+        if (diaActual == DayOfWeek.MONDAY) {
+            // Si hoy es lunes, el próximo lunes es en 7 días
+            proximoLunes = hoy.plusWeeks(1).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        } else {
+            // Si no es lunes, calcular el próximo lunes
+            proximoLunes = hoy.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        }
+        
+        // Calcular el próximo viernes (fin de la próxima semana)
+        LocalDate proximoViernes = proximoLunes.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
+
+        // Obtener todos los menús del usuario para la próxima semana
+        List<MenuDiaEntity> menusDiasProxSemana = menuDiaRepository.findAll()
+                .stream()
+                .filter(menu -> {
+                    LocalDate fechaMenu = menu.getFecha().toLocalDate();
+                    return !fechaMenu.isBefore(proximoLunes) && !fechaMenu.isAfter(proximoViernes)
+                            && menu.getUsuario().getId().equals(usuarioId);
+                })
+                .collect(Collectors.toList());
+
+        // Obtener todos los menú platos asociados a estos menús
+        List<PedidoProximaSemanaDTO> pedidos = new ArrayList<>();
+        
+        for (MenuDiaEntity menuDia : menusDiasProxSemana) {
+            List<MenuPlatosEntity> menuPlatos = menuPlatosRepository.findByMenuDiaId(menuDia.getId());
+            
+            for (MenuPlatosEntity menuPlato : menuPlatos) {
+                PedidoProximaSemanaDTO pedidoDTO = new PedidoProximaSemanaDTO();
+                pedidoDTO.setMenuPlatoId(menuPlato.getId());
+                pedidoDTO.setDiaSemana(menuDia.getDiaSemana());
+                pedidoDTO.setMenuDiaDescripcion(menuDia.getDescripcion());
+                
+                // Convertir plato a DTO
+                PlatoDTO platoDTO = new PlatoDTO();
+                platoDTO.setIdPlato(menuPlato.getPlato().getId());
+                platoDTO.setNombre(menuPlato.getPlato().getNombre());
+                platoDTO.setDescripcion(menuPlato.getPlato().getDescripcion());
+                platoDTO.setImagenUrl(menuPlato.getPlato().getImagenUrl());
+                platoDTO.setCategoria(menuPlato.getPlato().getCategoria());
+                pedidoDTO.setPlato(platoDTO);
+                
+                pedidos.add(pedidoDTO);
+            }
+        }
+
+        // Armar la respuesta
+        PedidosProximaSemanaResponseDTO response = new PedidosProximaSemanaResponseDTO();
+        response.setUsuarioId(usuarioId);
+        response.setNombreUsuario(usuario.getNombre() + " " + usuario.getApellido());
+        response.setPedidos(pedidos);
+        
+        return response;
     }
 }
