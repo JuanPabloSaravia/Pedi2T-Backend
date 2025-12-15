@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.pedi2t.pedi2t.Entity.PedidoDia;
+import com.pedi2t.pedi2t.Enum.EstadoPedido;
 
 public interface PedidoDiaRepository extends JpaRepository<PedidoDia, Long> {
     
@@ -53,4 +54,23 @@ public interface PedidoDiaRepository extends JpaRepository<PedidoDia, Long> {
     @Query("SELECT pd FROM PedidoDia pd JOIN FETCH pd.pedidoEntity p " +
            "WHERE pd.fechaEntrega = :fechaEntrega AND p.estado = 'CONFIRMADO'")
     List<PedidoDia> findPedidosConfirmadosByFecha(@Param("fechaEntrega") LocalDate fechaEntrega);
+    
+    @Query("SELECT pd FROM PedidoDia pd JOIN FETCH pd.pedidoEntity p JOIN FETCH pd.plato " +
+           "WHERE p.estado = :estado")
+    List<PedidoDia> findPedidosByEstado(@Param("estado") EstadoPedido estado);
+    
+    @Query("SELECT pd.plato.id, pd.plato.nombre, pd.plato.categoria, pd.plato.imagenUrl, " +
+           "SUM(CASE WHEN p.estado = 'PENDIENTE' THEN 1 ELSE 0 END), " +
+           "SUM(CASE WHEN p.estado = 'CONFIRMADO' THEN 1 ELSE 0 END) " +
+           "FROM PedidoDia pd JOIN pd.pedidoEntity p " +
+           "WHERE p.estado IN ('PENDIENTE', 'CONFIRMADO') " +
+           "GROUP BY pd.plato.id, pd.plato.nombre, pd.plato.categoria, pd.plato.imagenUrl " +
+           "ORDER BY (SUM(CASE WHEN p.estado = 'PENDIENTE' THEN 1 ELSE 0 END) + " +
+           "         SUM(CASE WHEN p.estado = 'CONFIRMADO' THEN 1 ELSE 0 END)) DESC")
+    List<Object[]> obtenerResumenPlatosPedidos();
+    
+    @Query("SELECT COUNT(pd) FROM PedidoDia pd JOIN pd.pedidoEntity p " +
+           "WHERE p.estado IN ('PENDIENTE', 'CONFIRMADO')")
+    Long obtenerTotalPedidosActivos();
 }
+
