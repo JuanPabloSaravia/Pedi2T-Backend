@@ -3,8 +3,10 @@ package com.pedi2t.pedi2t.Controller.User;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pedi2t.pedi2t.DTO.ActualizarPerfilDTO;
 import com.pedi2t.pedi2t.DTO.LoginResponseDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioLoginDTO;
+import com.pedi2t.pedi2t.DTO.UsuarioPerfilResponseDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioRegistroDTO;
 import com.pedi2t.pedi2t.Service.User.UsuarioService;
 
@@ -17,7 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -58,6 +63,36 @@ public class UsuarioController {
         } catch (RuntimeException e) {
             // 3. Si falla (credenciales inválidas), devuelve 401 Unauthorized
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{usuarioId}/perfil")
+    public ResponseEntity<?> obtenerPerfil(@PathVariable Long usuarioId) {
+        try {
+            UsuarioPerfilResponseDTO perfil = usuarioService.obtenerPerfilUsuario(usuarioId);
+            return ResponseEntity.ok(perfil);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{usuarioId}/perfil")
+    public ResponseEntity<?> actualizarPerfil(@PathVariable Long usuarioId,
+                                              @RequestBody @Valid ActualizarPerfilDTO actualizarDTO,
+                                              BindingResult result) {
+        if (result.hasErrors()) {
+            List<String> errores = result.getFieldErrors()
+                    .stream()
+                    .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                    .toList();
+            return ResponseEntity.badRequest().body(errores);
+        }
+
+        try {
+            UsuarioPerfilResponseDTO perfilActualizado = usuarioService.actualizarPerfilUsuario(usuarioId, actualizarDTO);
+            return ResponseEntity.ok(perfilActualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
