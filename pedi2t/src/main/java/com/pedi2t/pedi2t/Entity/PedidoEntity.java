@@ -1,10 +1,14 @@
 package com.pedi2t.pedi2t.Entity;
 
+
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.pedi2t.pedi2t.Enum.EstadoPedido;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -17,15 +21,11 @@ public class PedidoEntity {
     @Column(name = "id")
     private Long id;
 
-    @NotBlank(message = "El estado no puede estar vacío")
-    @Size(max = 50, message = "El estado no puede exceder los 50 caracteres")
+    @NotNull(message = "El estado del pedido es obligatorio")
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
-    private String estado;
+    private EstadoPedido estado;
 
-    @NotNull(message = "La cantidad de personas no puede ser nula")
-    @Min(value = 1, message = "La cantidad de personas debe ser al menos 1")
-    @Column(name = "cantidad persona", nullable = false)
-    private Integer cantidadPersona;
 
     @NotNull(message = "El pedido debe estar asociado a un usuario")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,5 +35,9 @@ public class PedidoEntity {
         foreignKey = @ForeignKey(name = "FK_pedido_usuario")
     )
     private UsuarioEntity usuario;
+
+    @CreationTimestamp
+    @Column(name = "fecha entrega", nullable = false, updatable = false)
+    private LocalDateTime fechaPedido;
     
 }
