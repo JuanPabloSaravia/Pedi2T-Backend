@@ -1,7 +1,13 @@
 package com.pedi2t.pedi2t.Controller.Admin;
 
 import com.pedi2t.pedi2t.DTO.Admin.CargarPlatosRequestDTO;
+import com.pedi2t.pedi2t.DTO.Admin.ConfirmarPedidoDTO;
+import com.pedi2t.pedi2t.DTO.Admin.ConfirmarPedidoResponseDTO;
+import com.pedi2t.pedi2t.DTO.Admin.EntregarPedidosDTO;
+import com.pedi2t.pedi2t.DTO.Admin.EntregarPedidosResponseDTO;
 import com.pedi2t.pedi2t.Entity.PlatoEntity;
+import com.pedi2t.pedi2t.Service.Admin.ConfirmarPedidoAdminService;
+import com.pedi2t.pedi2t.Service.Admin.EntregarPedidosAdminService;
 import com.pedi2t.pedi2t.Service.Admin.PlatoAdminService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +26,12 @@ public class AdminController {
     
     @Autowired
     private PlatoAdminService platoAdminService;
+    
+    @Autowired
+    private ConfirmarPedidoAdminService confirmarPedidoAdminService;
+    
+    @Autowired
+    private EntregarPedidosAdminService entregarPedidosAdminService;
     
     @PostMapping("/cargarPlatos")
     public ResponseEntity<?> cargarPlatos(
@@ -87,6 +99,38 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error interno del servidor: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/confirmarPedido")
+    public ResponseEntity<ConfirmarPedidoResponseDTO> confirmarPedido(@RequestBody @Valid ConfirmarPedidoDTO confirmarPedidoDTO) {
+        
+        try {
+            ConfirmarPedidoResponseDTO response = confirmarPedidoAdminService.confirmarPedido(confirmarPedidoDTO);
+            return ResponseEntity.ok(response);
+            
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                .body(null); // En un caso real, podrías crear un DTO de error
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(null);
+        }
+    }
+    
+    @PutMapping("/entregarPedidos")
+    public ResponseEntity<EntregarPedidosResponseDTO> entregarPedidos(@RequestBody @Valid EntregarPedidosDTO entregarPedidosDTO) {
+        
+        try {
+            EntregarPedidosResponseDTO response = entregarPedidosAdminService.marcarPedidosComoEntregados(entregarPedidosDTO);
+            return ResponseEntity.ok(response);
+            
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                .body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(null);
         }
     }
 }

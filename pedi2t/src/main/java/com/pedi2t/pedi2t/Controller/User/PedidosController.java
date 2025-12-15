@@ -5,10 +5,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pedi2t.pedi2t.DTO.CancelarPedidoDTO;
 import com.pedi2t.pedi2t.DTO.CancelarPedidoResponseDTO;
+import com.pedi2t.pedi2t.DTO.HistorialPedidosResponseDTO;
 import com.pedi2t.pedi2t.DTO.PedidosRealizadosResponseDTO;
 import com.pedi2t.pedi2t.DTO.SeleccPedidoResponseDTO;
 import com.pedi2t.pedi2t.DTO.SeleccionarPedidoDTO;
 import com.pedi2t.pedi2t.Service.User.CancelarPedidoService;
+import com.pedi2t.pedi2t.Service.User.HistorialPedidosService;
 import com.pedi2t.pedi2t.Service.User.PedidosRealizadosService;
 import com.pedi2t.pedi2t.Service.User.SeleccionarPedidoService;
 
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/Pedidos")
+@CrossOrigin(origins = "http://localhost:5173")
 public class PedidosController {
 
     @Autowired
@@ -36,6 +40,9 @@ public class PedidosController {
     
     @Autowired
     private CancelarPedidoService cancelarPedidoService;
+    
+    @Autowired
+    private HistorialPedidosService historialPedidosService;
     
     @PostMapping("/SeleccionarPedido")
     public ResponseEntity<?> seleccionarPedido(@RequestBody SeleccionarPedidoDTO seleccionarPedidoDTO) {
@@ -57,6 +64,14 @@ public class PedidosController {
     public ResponseEntity<CancelarPedidoResponseDTO> cancelarPedido(@RequestBody CancelarPedidoDTO cancelarPedidoDTO) {
         
         CancelarPedidoResponseDTO response = cancelarPedidoService.cancelarPedido(cancelarPedidoDTO);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/HistorialPedidos")
+    public ResponseEntity<HistorialPedidosResponseDTO> historialPedidos(@RequestParam Long usuarioId) {
+        
+        HistorialPedidosResponseDTO response = historialPedidosService.obtenerHistorialPedidos(usuarioId);
         
         return ResponseEntity.ok(response);
     }
