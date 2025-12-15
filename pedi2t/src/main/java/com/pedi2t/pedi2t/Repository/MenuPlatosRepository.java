@@ -15,6 +15,8 @@ public interface MenuPlatosRepository extends JpaRepository<MenuPlatosEntity, Lo
     
     List<MenuPlatosEntity> findByPublicadoTrue();
     
+    List<MenuPlatosEntity> findByPlatoId(Long platoId);
+    
     @Modifying
     @Query("UPDATE MenuPlatosEntity mp SET mp.publicado = false WHERE mp.publicado = true")
     void despublicarTodosLosMenuPlatos();

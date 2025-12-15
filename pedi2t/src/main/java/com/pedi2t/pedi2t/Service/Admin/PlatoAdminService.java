@@ -194,13 +194,19 @@ public class PlatoAdminService {
         PlatoEntity plato = platoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plato no encontrado con ID: " + id));
         
-        // Eliminar imagen de Cloudinary
+        // PRIMERO: Eliminar todas las asociaciones MenuPlatos que referencian este plato
+        List<MenuPlatosEntity> menuPlatosAsociados = menuPlatosRepository.findByPlatoId(id);
+        if (!menuPlatosAsociados.isEmpty()) {
+            menuPlatosRepository.deleteAll(menuPlatosAsociados);
+        }
+        
+        // SEGUNDO: Eliminar imagen de Cloudinary
         String publicId = cloudinaryService.extractPublicId(plato.getImagenUrl());
         if (publicId != null) {
             cloudinaryService.deleteImage(publicId);
         }
         
-        // Eliminar plato de la base de datos
+        // TERCERO: Eliminar plato de la base de datos
         platoRepository.delete(plato);
     }
 }
