@@ -21,6 +21,7 @@ import com.pedi2t.pedi2t.Entity.MenuDiaEntity;
 import com.pedi2t.pedi2t.Entity.PedidoDia;
 import com.pedi2t.pedi2t.Enum.EstadoPedido;
 import com.pedi2t.pedi2t.Repository.MenuDiaRepository;
+import com.pedi2t.pedi2t.Repository.MenuPlatosRepository;
 import com.pedi2t.pedi2t.Repository.PedidoDiaRepository;
 import com.pedi2t.pedi2t.Repository.PedidoRepository;
 import com.pedi2t.pedi2t.Service.Admin.ConfirmarPedidoAdminService;
@@ -39,6 +40,9 @@ public class ConfirmarPedidoAdminServiceImpl implements ConfirmarPedidoAdminServ
     
     @Autowired
     private MenuDiaRepository menuDiaRepository;
+    
+    @Autowired
+    private MenuPlatosRepository menuPlatosRepository;
 
     @Override
     public ConfirmarPedidoResponseDTO confirmarPedido(ConfirmarPedidoDTO confirmarPedidoDTO) {
@@ -78,6 +82,9 @@ public class ConfirmarPedidoAdminServiceImpl implements ConfirmarPedidoAdminServ
         
         // Despublicar todos los menús que estaban publicados
         despublicarTodosLosMenus();
+        
+        // Despublicar todos los menu-platos que estaban publicados
+        despublicarTodosLosMenuPlatos();
         
         // Crear la respuesta
         ConfirmarPedidoResponseDTO response = new ConfirmarPedidoResponseDTO();
@@ -158,5 +165,10 @@ public class ConfirmarPedidoAdminServiceImpl implements ConfirmarPedidoAdminServ
             menu.setPublicado(false);
             menuDiaRepository.save(menu);
         }
+    }
+    
+    private void despublicarTodosLosMenuPlatos() {
+        // Usar query para actualizar todos los MenuPlatosEntity a publicado=false
+        menuPlatosRepository.despublicarTodosLosMenuPlatos();
     }
 }

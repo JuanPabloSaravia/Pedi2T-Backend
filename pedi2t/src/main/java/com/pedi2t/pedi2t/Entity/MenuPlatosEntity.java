@@ -40,6 +40,9 @@ public class MenuPlatosEntity {
         foreignKey = @ForeignKey(name = "FK_menu_platos_menu_dia")
     )
     private MenuDiaEntity menuDia;
+    
+    @Column(name = "publicado", nullable = false)
+    private Boolean publicado = true; // Por defecto publicado
 
 
 }

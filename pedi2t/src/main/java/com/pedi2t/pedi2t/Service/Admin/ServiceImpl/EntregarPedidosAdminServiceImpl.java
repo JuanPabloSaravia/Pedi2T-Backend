@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.pedi2t.pedi2t.DTO.Admin.EntregarPedidosDTO;
 import com.pedi2t.pedi2t.DTO.Admin.EntregarPedidosResponseDTO;
 import com.pedi2t.pedi2t.Entity.PedidoDia;
+import com.pedi2t.pedi2t.Entity.PedidoEntity;
 import com.pedi2t.pedi2t.Enum.EstadoPedido;
 import com.pedi2t.pedi2t.Repository.PedidoDiaRepository;
 import com.pedi2t.pedi2t.Repository.PedidoRepository;
@@ -40,7 +41,7 @@ public class EntregarPedidosAdminServiceImpl implements EntregarPedidosAdminServ
         // Marcar todos los pedidos como ENTREGADO
         int cantidadEntregados = 0;
         for (PedidoDia pedidoDia : pedidosConfirmados) {
-            var pedido = pedidoDia.getPedidoEntity();
+            PedidoEntity pedido = pedidoDia.getPedidoEntity();
             pedido.setEstado(EstadoPedido.ENTREGADO);
             pedidoRepository.save(pedido);
             cantidadEntregados++;

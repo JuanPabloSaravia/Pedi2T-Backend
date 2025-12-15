@@ -5,9 +5,11 @@ import com.pedi2t.pedi2t.DTO.Admin.ConfirmarPedidoDTO;
 import com.pedi2t.pedi2t.DTO.Admin.ConfirmarPedidoResponseDTO;
 import com.pedi2t.pedi2t.DTO.Admin.EntregarPedidosDTO;
 import com.pedi2t.pedi2t.DTO.Admin.EntregarPedidosResponseDTO;
+import com.pedi2t.pedi2t.DTO.Admin.HomeAdminResponseDTO;
 import com.pedi2t.pedi2t.Entity.PlatoEntity;
 import com.pedi2t.pedi2t.Service.Admin.ConfirmarPedidoAdminService;
 import com.pedi2t.pedi2t.Service.Admin.EntregarPedidosAdminService;
+import com.pedi2t.pedi2t.Service.Admin.HomeAdminService;
 import com.pedi2t.pedi2t.Service.Admin.PlatoAdminService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class AdminController {
     
     @Autowired
     private EntregarPedidosAdminService entregarPedidosAdminService;
+    
+    @Autowired
+    private HomeAdminService homeAdminService;
     
     @PostMapping("/cargarPlatos")
     public ResponseEntity<?> cargarPlatos(
@@ -131,6 +136,20 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(null);
+        }
+    }
+    
+    @GetMapping("/home/{usuarioId}")
+    public ResponseEntity<HomeAdminResponseDTO> getHomeAdmin(@PathVariable Long usuarioId) {
+        try {
+            HomeAdminResponseDTO response = homeAdminService.obtenerMenusParaAdmin(usuarioId);
+            return ResponseEntity.ok(response);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }
