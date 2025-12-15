@@ -97,6 +97,15 @@ public class SeleccionarPedidoServiceImpl implements SeleccionarPedidoService {
             throw new IllegalArgumentException("No hay stock disponible para este menú");
         }
         
+        // Calcular la fecha de entrega usando FechaUtil
+        LocalDate fechaEntrega = FechaUtil.calcularSiguienteFecha(seleccionarPedidoDTO.getDiaEntrega());
+        
+        // Verificar que el usuario no tenga ya un pedido pendiente para esa fecha
+        boolean tienePedidoEnFecha = pedidoDiaRepository.existePedidoPendienteEnFecha(idUsuario, fechaEntrega);
+        if (tienePedidoEnFecha) {
+            throw new IllegalArgumentException("Ya tienes un pedido pendiente para el día " + fechaEntrega + ". Solo se puede seleccionar un pedido por día.");
+        }
+        
         // Reducir el stock en 1
         menuDia.setStockTotal(menuDia.getStockTotal() - 1);
         menuDiaRepository.save(menuDia);
@@ -108,9 +117,6 @@ public class SeleccionarPedidoServiceImpl implements SeleccionarPedidoService {
         
         // Guardar el pedido
         PedidoEntity pedidoGuardado = pedidoRepository.save(nuevoPedido);
-
-        // Calcular la fecha de entrega usando FechaUtil
-        LocalDate fechaEntrega = FechaUtil.calcularSiguienteFecha(seleccionarPedidoDTO.getDiaEntrega());
 
         // Crear la relación PedidoDia
         PedidoDia pedidoDia = new PedidoDia();
