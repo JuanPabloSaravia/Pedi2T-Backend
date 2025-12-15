@@ -48,7 +48,7 @@ public class PedidosRealizadosServiceImpl implements PedidosRealizadosService {
             usuarioId, proximoLunes, proximoViernes
         );
         
-        // Convertir a DTO (forma tradicional)
+        // Convertir a DTO 
         List<PedidoRealizadoDTO> pedidosDTO = new ArrayList<>();
         for (PedidoDia pedidoDia : pedidosDia) {
             PedidoRealizadoDTO dto = convertirAPedidoRealizadoDTO(pedidoDia);

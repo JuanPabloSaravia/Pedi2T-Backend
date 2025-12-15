@@ -18,11 +18,11 @@ public class FechaUtil {
 
     
     /**
-     * Calcula la próxima fecha para un día de la semana (excluyendo hoy)
-     * Siempre devuelve una fecha futura, aunque hoy sea el día solicitado
+     * Calcula la fecha en la PRÓXIMA SEMANA para un día específico
+     * Siempre devuelve una fecha de la próxima semana, sin importar qué día es hoy
      * 
-     * @param diaObjetivoStr Día de la semana en español
-     * @return La próxima fecha futura para ese día
+     * @param diaObjetivoStr Día de la semana en español  
+     * @return La fecha en la próxima semana para ese día
      */
     public static LocalDate calcularSiguienteFecha(String diaObjetivoStr) {
         LocalDate hoy = LocalDate.now();
@@ -34,8 +34,13 @@ public class FechaUtil {
                 ". Días válidos: LUNES, MARTES, MIERCOLES, JUEVES, VIERNES");
         }
 
-        // Siempre devolver la próxima ocurrencia (nunca hoy)
-        return hoy.with(TemporalAdjusters.next(diaObjetivo));
+        // Obtener el lunes de la próxima semana
+        LocalDate proximoLunes = hoy.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        
+        // Calcular el día objetivo en la próxima semana
+        LocalDate fechaObjetivo = proximoLunes.with(TemporalAdjusters.nextOrSame(diaObjetivo));
+        
+        return fechaObjetivo;
     }
     
 }

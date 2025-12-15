@@ -3,7 +3,8 @@ package com.pedi2t.pedi2t.Enum;
 public enum EstadoPedido {
     PENDIENTE("PENDIENTE"),
     CONFIRMADO("CONFIRMADO"), 
-    CANCELADO("CANCELADO");
+    CANCELADO("CANCELADO"),
+    ENTREGADO("ENTREGADO");
 
     private final String valor;
 

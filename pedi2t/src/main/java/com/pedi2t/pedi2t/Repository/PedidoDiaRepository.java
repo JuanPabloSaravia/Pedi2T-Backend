@@ -35,4 +35,22 @@ public interface PedidoDiaRepository extends JpaRepository<PedidoDia, Long> {
            "JOIN FETCH pd.menuDia md JOIN FETCH pd.plato pl " +
            "WHERE p.id = :pedidoId")
     Optional<PedidoDia> findByPedidoEntityId(@Param("pedidoId") Long pedidoId);
+    
+    @Query("SELECT pd FROM PedidoDia pd JOIN FETCH pd.pedidoEntity p JOIN FETCH p.usuario u " +
+           "JOIN FETCH pd.plato pl " +
+           "WHERE u.id = :usuarioId AND p.estado = 'ENTREGADO' " +
+           "ORDER BY pd.fechaEntrega DESC")
+    List<PedidoDia> findHistorialByUsuarioId(@Param("usuarioId") Long usuarioId);
+    
+    @Query("SELECT pd FROM PedidoDia pd JOIN FETCH pd.pedidoEntity p " +
+           "WHERE pd.fechaEntrega BETWEEN :fechaInicio AND :fechaFin " +
+           "AND p.estado = 'PENDIENTE'")
+    List<PedidoDia> findPedidosPendientesByFechaRange(
+        @Param("fechaInicio") LocalDate fechaInicio, 
+        @Param("fechaFin") LocalDate fechaFin
+    );
+    
+    @Query("SELECT pd FROM PedidoDia pd JOIN FETCH pd.pedidoEntity p " +
+           "WHERE pd.fechaEntrega = :fechaEntrega AND p.estado = 'CONFIRMADO'")
+    List<PedidoDia> findPedidosConfirmadosByFecha(@Param("fechaEntrega") LocalDate fechaEntrega);
 }
