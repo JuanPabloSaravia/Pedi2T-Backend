@@ -1,6 +1,7 @@
 package com.pedi2t.pedi2t.Controller.Admin;
 
 import com.pedi2t.pedi2t.DTO.Admin.CargarPlatosRequestDTO;
+import com.pedi2t.pedi2t.DTO.Admin.NotificarRequestDTO;
 import com.pedi2t.pedi2t.Entity.PlatoEntity;
 import com.pedi2t.pedi2t.Service.Admin.PlatoAdminService;
 import com.pedi2t.pedi2t.Service.Admin.NotificacionService;
@@ -22,6 +23,9 @@ public class AdminController {
     
     @Autowired
     private PlatoAdminService platoAdminService;
+    
+    @Autowired
+    private NotificacionService notificacionService;
     
     @PostMapping("/cargarPlatos")
     public ResponseEntity<?> cargarPlatos(
@@ -89,6 +93,44 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error interno del servidor: " + e.getMessage());
+        }
+    }
+    
+    @PostMapping("/notificar/usuario/{usuarioId}")
+    public ResponseEntity<?> notificarUsuario(@PathVariable Long usuarioId) {
+        try {
+            String asunto = "Todavia no selecciono su pedido para la proxima semana";
+            String mensaje = "Por favor complete su selección de pedidos para la próxima semana";
+            
+            NotificarRequestDTO request = new NotificarRequestDTO();
+            request.setUsuarioId(usuarioId);
+            request.setAsunto(asunto);
+            request.setMensaje(mensaje);
+            
+            notificacionService.notificarUsuario(request);
+            return ResponseEntity.ok()
+                    .body("Notificación enviada exitosamente al usuario con ID: " + usuarioId);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al enviar notificación: " + e.getMessage());
+        }
+    }
+    
+    @PostMapping("/notificar/sin-pedidos")
+    public ResponseEntity<?> notificarUsuariosSinPedidos() {
+        try {
+            String asunto = "Todavia no selecciono su pedido para la proxima semana";
+            String mensaje = "Por favor complete su selección de pedidos para la próxima semana";
+            
+            notificacionService.notificarATodos(asunto, mensaje);
+            return ResponseEntity.ok()
+                    .body("Notificaciones enviadas a todos los usuarios sin pedidos para la próxima semana");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al enviar notificaciones: " + e.getMessage());
         }
     }
 }
