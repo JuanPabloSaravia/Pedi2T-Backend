@@ -37,7 +37,7 @@ public class PedidoEntity {
     private UsuarioEntity usuario;
 
     @CreationTimestamp
-    @Column(name = "fecha entrega", nullable = false, updatable = false)
+    @Column(name = "fecha pedido", nullable = false, updatable = false)
     private LocalDateTime fechaPedido;
     
 }

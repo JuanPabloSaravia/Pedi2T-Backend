@@ -86,8 +86,10 @@ public class HomeMenuServiceImpl implements HomeMenuService {
     }
 
     private MenuDiaDTO convertirAMenuDiaDTO(MenuDiaEntity menuDia) {
-        List<MenuPlatosEntity> menuPlatos = menuPlatosRepository.findByMenuDiaId(menuDia.getId());
-        List<PlatoDTO> platos = menuPlatos.stream()
+        // Obtener directamente solo los platos publicados desde el repository
+        List<MenuPlatosEntity> menuPlatosPublicados = menuPlatosRepository.findByMenuDiaIdAndPublicadoTrue(menuDia.getId());
+        
+        List<PlatoDTO> platos = menuPlatosPublicados.stream()
             .map(this::convertirAPlatoDTO)
             .collect(Collectors.toList());
 
