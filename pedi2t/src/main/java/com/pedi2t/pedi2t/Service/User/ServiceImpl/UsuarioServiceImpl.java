@@ -1,8 +1,6 @@
 package com.pedi2t.pedi2t.Service.User.ServiceImpl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.pedi2t.pedi2t.DTO.ActualizarPerfilDTO;
 import com.pedi2t.pedi2t.DTO.LoginResponseDTO;
+import com.pedi2t.pedi2t.DTO.PedidosRealizadosResponseDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioLoginDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioPerfilResponseDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioRegistroDTO;
@@ -17,6 +16,7 @@ import com.pedi2t.pedi2t.DTO.UsuarioResponseDTO;
 import com.pedi2t.pedi2t.Entity.UsuarioEntity;
 import com.pedi2t.pedi2t.Repository.UsuarioRepository;
 import com.pedi2t.pedi2t.Service.User.JwtService;
+import com.pedi2t.pedi2t.Service.User.PedidosRealizadosService;
 import com.pedi2t.pedi2t.Service.User.UsuarioService;
 import com.pedi2t.pedi2t.Repository.DiasPresencialesRepository;
 import com.pedi2t.pedi2t.Entity.DiasPresencialesEntity;
@@ -35,6 +35,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private JwtService jwtService; // Dependencia del servicio de JWT
+    
+    @Autowired
+    private PedidosRealizadosService pedidosRealizadosService;
 
     @Override
     public UsuarioResponseDTO registrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO) {
@@ -194,5 +197,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         });
 
         return perfil;
+    }
+    
+    @Override
+    public PedidosRealizadosResponseDTO obtenerPedidosProximaSemana(Long usuarioId) {
+        // Reutilizar la funcionalidad ya implementada en PedidosRealizadosService
+        return pedidosRealizadosService.obtenerPedidosProximaSemana(usuarioId);
     }
 }

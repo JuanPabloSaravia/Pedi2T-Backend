@@ -2,7 +2,7 @@ package com.pedi2t.pedi2t.Service.User;
 
 import com.pedi2t.pedi2t.DTO.ActualizarPerfilDTO;
 import com.pedi2t.pedi2t.DTO.LoginResponseDTO;
-import com.pedi2t.pedi2t.DTO.PedidosProximaSemanaResponseDTO;
+import com.pedi2t.pedi2t.DTO.PedidosRealizadosResponseDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioLoginDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioPerfilResponseDTO;
 import com.pedi2t.pedi2t.DTO.UsuarioRegistroDTO;
@@ -13,7 +13,7 @@ public interface UsuarioService {
     
     public UsuarioResponseDTO registrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO);
     public LoginResponseDTO login(UsuarioLoginDTO loginDTO);
-    public PedidosProximaSemanaResponseDTO obtenerPedidosProximaSemana(Long usuarioId);
+    public PedidosRealizadosResponseDTO obtenerPedidosProximaSemana(Long usuarioId);
     public UsuarioPerfilResponseDTO obtenerPerfilUsuario(Long usuarioId);
     public UsuarioPerfilResponseDTO actualizarPerfilUsuario(Long usuarioId, ActualizarPerfilDTO actualizarDTO);
 
