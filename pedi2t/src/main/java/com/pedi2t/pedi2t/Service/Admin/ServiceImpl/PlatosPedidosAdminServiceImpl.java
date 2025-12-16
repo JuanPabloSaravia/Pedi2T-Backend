@@ -2,6 +2,7 @@ package com.pedi2t.pedi2t.Service.Admin.ServiceImpl;
 
 import com.pedi2t.pedi2t.DTO.Admin.PlatosPedidosResponseDTO;
 import com.pedi2t.pedi2t.DTO.Admin.PlatosPedidosResponseDTO.PlatoPedidoDTO;
+import com.pedi2t.pedi2t.DTO.Admin.PlatosPedidosResponseDTO.PedidosPorDiaDTO;
 import com.pedi2t.pedi2t.Entity.PedidoDia;
 import com.pedi2t.pedi2t.Enum.EstadoPedido;
 import com.pedi2t.pedi2t.Repository.PedidoDiaRepository;
@@ -28,29 +29,48 @@ public class PlatosPedidosAdminServiceImpl implements PlatosPedidosAdminService 
         
         if (resultados.isEmpty()) {
             PlatosPedidosResponseDTO response = new PlatosPedidosResponseDTO();
-            response.setPlatos(List.of());
+            response.setPedidosPorDia(List.of());
             response.setTotalPedidos(0);
             response.setMensaje("No hay pedidos activos en este momento");
             return response;
         }
         
-        // Mapear directamente desde los resultados de la query
-        List<PlatoPedidoDTO> platosDTO = resultados.stream()
+        // Mapear y agrupar por día de la semana
+        Map<String, List<PlatoPedidoDTO>> platosPorDia = resultados.stream()
             .map(row -> {
                 PlatoPedidoDTO dto = new PlatoPedidoDTO();
-                dto.setIdPlato((Long) row[0]);           // plato.id
-                dto.setNombrePlato((String) row[1]);     // plato.nombre
-                dto.setCategoria((String) row[2]);       // plato.categoria
-                dto.setImagenUrl((String) row[3]);       // plato.imagenUrl
+                dto.setIdPlato((Long) row[0]);
+                dto.setNombrePlato((String) row[1]);
+                dto.setCategoria((String) row[2]);
+                dto.setImagenUrl((String) row[3]);
                 
-                int pendientes = ((Long) row[4]).intValue();    // COUNT pendientes
-                int confirmados = ((Long) row[5]).intValue();   // COUNT confirmados
+                String diaSemana = (String) row[4];
+                int pendientes = ((Long) row[5]).intValue();
+                int confirmados = ((Long) row[6]).intValue();
                 
                 dto.setCantidadPendiente(pendientes);
                 dto.setCantidadConfirmado(confirmados);
                 dto.setCantidadTotal(pendientes + confirmados);
                 
-                return dto;
+                return new Object[]{diaSemana, dto};
+            })
+            .collect(Collectors.groupingBy(
+                arr -> (String) arr[0],
+                Collectors.mapping(arr -> (PlatoPedidoDTO) arr[1], Collectors.toList())
+            ));
+        
+        // Convertir a DTOs por día con orden específico
+        List<String> ordenDias = List.of("LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES");
+        List<PedidosPorDiaDTO> pedidosPorDia = ordenDias.stream()
+            .filter(dia -> platosPorDia.containsKey(dia) && !platosPorDia.get(dia).isEmpty())
+            .map(dia -> {
+                PedidosPorDiaDTO diaDto = new PedidosPorDiaDTO();
+                diaDto.setDiaSemana(dia);
+                diaDto.setPlatos(platosPorDia.get(dia));
+                diaDto.setTotalPlatosDia(platosPorDia.get(dia).stream()
+                    .mapToInt(PlatoPedidoDTO::getCantidadTotal)
+                    .sum());
+                return diaDto;
             })
             .collect(Collectors.toList());
         
@@ -65,9 +85,9 @@ public class PlatosPedidosAdminServiceImpl implements PlatosPedidosAdminService 
         
         // Crear respuesta
         PlatosPedidosResponseDTO response = new PlatosPedidosResponseDTO();
-        response.setPlatos(platosDTO);
+        response.setPedidosPorDia(pedidosPorDia);
         response.setTotalPedidos(totalPedidos);
-        response.setMensaje("Listado de platos pedidos obtenido exitosamente");
+        response.setMensaje("Listado de platos pedidos agrupados por día obtenido exitosamente");
         
         return response;
     }

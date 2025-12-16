@@ -5,9 +5,16 @@ import java.util.List;
 
 @Data
 public class PlatosPedidosResponseDTO {
-    private List<PlatoPedidoDTO> platos;
+    private List<PedidosPorDiaDTO> pedidosPorDia;
     private Integer totalPedidos;
     private String mensaje;
+    
+    @Data
+    public static class PedidosPorDiaDTO {
+        private String diaSemana;
+        private List<PlatoPedidoDTO> platos;
+        private Integer totalPlatosDia;
+    }
     
     @Data
     public static class PlatoPedidoDTO {

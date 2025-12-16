@@ -59,12 +59,12 @@ public interface PedidoDiaRepository extends JpaRepository<PedidoDia, Long> {
            "WHERE p.estado = :estado")
     List<PedidoDia> findPedidosByEstado(@Param("estado") EstadoPedido estado);
     
-    @Query("SELECT pd.plato.id, pd.plato.nombre, pd.plato.categoria, pd.plato.imagenUrl, " +
+    @Query("SELECT pd.plato.id, pd.plato.nombre, pd.plato.categoria, pd.plato.imagenUrl, pd.menuDia.diaSemana, " +
            "SUM(CASE WHEN p.estado = 'PENDIENTE' THEN 1 ELSE 0 END), " +
            "SUM(CASE WHEN p.estado = 'CONFIRMADO' THEN 1 ELSE 0 END) " +
-           "FROM PedidoDia pd JOIN pd.pedidoEntity p " +
+           "FROM PedidoDia pd JOIN pd.pedidoEntity p JOIN pd.menuDia md " +
            "WHERE p.estado IN ('PENDIENTE', 'CONFIRMADO') " +
-           "GROUP BY pd.plato.id, pd.plato.nombre, pd.plato.categoria, pd.plato.imagenUrl " +
+           "GROUP BY pd.plato.id, pd.plato.nombre, pd.plato.categoria, pd.plato.imagenUrl, pd.menuDia.diaSemana " +
            "ORDER BY (SUM(CASE WHEN p.estado = 'PENDIENTE' THEN 1 ELSE 0 END) + " +
            "         SUM(CASE WHEN p.estado = 'CONFIRMADO' THEN 1 ELSE 0 END)) DESC")
     List<Object[]> obtenerResumenPlatosPedidos();
