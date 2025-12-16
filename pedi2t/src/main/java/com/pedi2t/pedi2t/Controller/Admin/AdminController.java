@@ -28,126 +28,132 @@ import java.io.IOException;
 @RequestMapping("/admin")
 @CrossOrigin(origins = "http://localhost:5173")
 public class AdminController {
-    
+
     @Autowired
     private PlatoAdminService platoAdminService;
-    
+
     @Autowired
     private ConfirmarPedidoAdminService confirmarPedidoAdminService;
-    
+
     @Autowired
     private EntregarPedidosAdminService entregarPedidosAdminService;
-    
+
     @Autowired
     private HomeAdminService homeAdminService;
-    
+
     @Autowired
     private PlatosPedidosAdminService platosPedidosAdminService;
-    
+
     @Autowired
     private PublicarPlatoAdminService publicarPlatoAdminService;
-    
+
+    @Autowired
+    private com.pedi2t.pedi2t.Service.Admin.NotificacionAdminService notificacionAdminService;
+
     @PostMapping("/cargarPlatos")
     public ResponseEntity<?> cargarPlatos(
             @RequestPart("plato") @Valid CargarPlatosRequestDTO platoDTO,
             @RequestPart("imagen") MultipartFile imagen) {
-        
+
         try {
             // Validar que se haya enviado una imagen
             if (imagen.isEmpty()) {
                 return ResponseEntity.badRequest()
-                    .body("Debe proporcionar una imagen");
+                        .body("Debe proporcionar una imagen");
             }
-            
+
             // Cargar plato con imagen en Cloudinary
             PlatoEntity platoGuardado = platoAdminService.cargarPlato(platoDTO, imagen);
-            
+
             return ResponseEntity.ok()
-                    .body("Plato cargado exitosamente. ID: " + platoGuardado.getId() + 
-                          ", URL de imagen: " + platoGuardado.getImagenUrl());
-                
+                    .body("Plato cargado exitosamente. ID: " + platoGuardado.getId() +
+                            ", URL de imagen: " + platoGuardado.getImagenUrl());
+
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error al subir la imagen: " + e.getMessage());
+                    .body("Error al subir la imagen: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error interno del servidor: " + e.getMessage());
+                    .body("Error interno del servidor: " + e.getMessage());
         }
     }
-    
+
     @PutMapping("/actualizarPlato/{id}")
     public ResponseEntity<?> actualizarPlato(
             @PathVariable Long id,
             @RequestPart("plato") @Valid CargarPlatosRequestDTO platoDTO,
             @RequestPart(value = "imagen", required = false) MultipartFile imagen) {
-        
+
         try {
             PlatoEntity platoActualizado = platoAdminService.actualizarPlato(id, platoDTO, imagen);
-            
+
             return ResponseEntity.ok()
-                    .body("Plato actualizado exitosamente. ID: " + platoActualizado.getId() + 
-                          ", URL de imagen: " + platoActualizado.getImagenUrl());
-                
+                    .body("Plato actualizado exitosamente. ID: " + platoActualizado.getId() +
+                            ", URL de imagen: " + platoActualizado.getImagenUrl());
+
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error al subir la imagen: " + e.getMessage());
+                    .body("Error al subir la imagen: " + e.getMessage());
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(e.getMessage());
+                    .body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error interno del servidor: " + e.getMessage());
+                    .body("Error interno del servidor: " + e.getMessage());
         }
     }
-    
+
     @DeleteMapping("/eliminarPlato/{id}")
     public ResponseEntity<?> eliminarPlato(@PathVariable Long id) {
         try {
             platoAdminService.eliminarPlato(id);
             return ResponseEntity.ok()
                     .body("Plato eliminado exitosamente");
-                    
+
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(e.getMessage());
+                    .body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error interno del servidor: " + e.getMessage());
+                    .body("Error interno del servidor: " + e.getMessage());
         }
     }
 
     @PutMapping("/confirmarPedido")
-    public ResponseEntity<ConfirmarPedidoResponseDTO> confirmarPedido(@RequestBody @Valid ConfirmarPedidoDTO confirmarPedidoDTO) {
-        
+    public ResponseEntity<ConfirmarPedidoResponseDTO> confirmarPedido(
+            @RequestBody @Valid ConfirmarPedidoDTO confirmarPedidoDTO) {
+
         try {
             ConfirmarPedidoResponseDTO response = confirmarPedidoAdminService.confirmarPedido(confirmarPedidoDTO);
             return ResponseEntity.ok(response);
-            
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                .body(null); // En un caso real, podrías crear un DTO de error
+                    .body(null); // En un caso real, podrías crear un DTO de error
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null);
+                    .body(null);
         }
     }
-    
+
     @PutMapping("/entregarPedidos")
-    public ResponseEntity<EntregarPedidosResponseDTO> entregarPedidos(@RequestBody @Valid EntregarPedidosDTO entregarPedidosDTO) {
-        
+    public ResponseEntity<EntregarPedidosResponseDTO> entregarPedidos(
+            @RequestBody @Valid EntregarPedidosDTO entregarPedidosDTO) {
+
         try {
-            EntregarPedidosResponseDTO response = entregarPedidosAdminService.marcarPedidosComoEntregados(entregarPedidosDTO);
+            EntregarPedidosResponseDTO response = entregarPedidosAdminService
+                    .marcarPedidosComoEntregados(entregarPedidosDTO);
             return ResponseEntity.ok(response);
-            
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                .body(null);
+                    .body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null);
+                    .body(null);
         }
     }
-    
+
     @GetMapping("/home/{usuarioId}")
     public ResponseEntity<HomeAdminResponseDTO> getHomeAdmin(@PathVariable Long usuarioId) {
         try {
@@ -161,7 +167,7 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @GetMapping("/platosPedidos")
     public ResponseEntity<PlatosPedidosResponseDTO> obtenerPlatosPedidos() {
         try {
@@ -177,70 +183,108 @@ public class AdminController {
         try {
             publicarPlatoAdminService.republicarPlato(usuarioId, menuPlatoId);
             return ResponseEntity.ok()
-                .body("Plato republicado exitosamente");
+                    .body("Plato republicado exitosamente");
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body("No tiene permisos para esta acción");
+                    .body("No tiene permisos para esta acción");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                .body(e.getMessage());
+                    .body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error interno del servidor");
+                    .body("Error interno del servidor");
         }
     }
-    
+
     @PutMapping("/republicarTodos/{usuarioId}")
     public ResponseEntity<?> republicarTodosLosPlatos(@PathVariable Long usuarioId) {
         try {
             publicarPlatoAdminService.republicarTodosLosPlatos(usuarioId);
             return ResponseEntity.ok()
-                .body("Todos los platos han sido republicados exitosamente");
+                    .body("Todos los platos han sido republicados exitosamente");
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body("No tiene permisos para esta acción");
+                    .body("No tiene permisos para esta acción");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                .body(e.getMessage());
+                    .body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error interno del servidor");
+                    .body("Error interno del servidor");
         }
     }
-    
+
     @PutMapping("/despublicarPlato/{usuarioId}/{menuPlatoId}")
     public ResponseEntity<?> despublicarPlato(@PathVariable Long usuarioId, @PathVariable Long menuPlatoId) {
         try {
             publicarPlatoAdminService.despublicarPlato(usuarioId, menuPlatoId);
             return ResponseEntity.ok()
-                .body("Plato despublicado exitosamente");
+                    .body("Plato despublicado exitosamente");
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body("No tiene permisos para esta acción");
+                    .body("No tiene permisos para esta acción");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                .body(e.getMessage());
+                    .body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error interno del servidor");
+                    .body("Error interno del servidor");
         }
     }
-    
+
     @PutMapping("/despublicarTodos/{usuarioId}")
     public ResponseEntity<?> despublicarTodosLosPlatos(@PathVariable Long usuarioId) {
         try {
             publicarPlatoAdminService.despublicarTodosLosPlatos(usuarioId);
             return ResponseEntity.ok()
-                .body("Todos los platos han sido despublicados exitosamente");
+                    .body("Todos los platos han sido despublicados exitosamente");
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body("No tiene permisos para esta acción");
+                    .body("No tiene permisos para esta acción");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                .body(e.getMessage());
+                    .body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error interno del servidor");
+                    .body("Error interno del servidor");
+        }
+    }
+
+    @GetMapping("/usuarios/sin-seleccion")
+    public ResponseEntity<java.util.List<com.pedi2t.pedi2t.DTO.Admin.UsuarioSinSeleccionDTO>> getUsuariosSinSeleccion() {
+        try {
+            java.util.List<com.pedi2t.pedi2t.DTO.Admin.UsuarioSinSeleccionDTO> lista = notificacionAdminService
+                    .obtenerUsuariosSinSeleccion();
+            return ResponseEntity.ok(lista);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/notificar")
+    public ResponseEntity<?> notificarUsuario(@RequestBody java.util.Map<String, Long> body) {
+        try {
+            Long usuarioId = body.get("usuarioId");
+            if (usuarioId == null) {
+                return ResponseEntity.badRequest().body("Falta usuarioId en el body");
+            }
+            notificacionAdminService.notificarUsuario(usuarioId);
+            return ResponseEntity.ok().body("Notificación enviada");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor");
+        }
+    }
+
+    @PostMapping("/notificar/todos")
+    public ResponseEntity<?> notificarTodos() {
+        try {
+            notificacionAdminService.notificarTodos();
+            return ResponseEntity.ok().body("Notificaciones enviadas");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
