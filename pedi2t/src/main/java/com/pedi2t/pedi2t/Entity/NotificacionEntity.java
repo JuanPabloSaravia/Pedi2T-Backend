@@ -13,14 +13,14 @@ import lombok.Data;
 @Data
 @Table(name = "notificaciones")
 public class NotificacionEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @CreationTimestamp
-    @Column(name = "fecha envio", nullable = false, updatable = false)
+    @Column(name = "fecha_envio", nullable = false, updatable = false)
     private LocalDateTime fechaEnvio;
 
     @NotBlank(message = "El asunto no puede estar vacío")
@@ -33,13 +33,16 @@ public class NotificacionEntity {
     @Column(name = "mensaje", nullable = false)
     private String mensaje;
 
+    @Column(name = "leida", nullable = false)
+    private boolean leida = false;
+
+    @Size(max = 50, message = "El tipo no puede exceder 50 caracteres")
+    @Column(name = "tipo")
+    private String tipo;
+
     @NotNull(message = "El pedido debe estar asociado a un usuario")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-        name = "id_usuario", 
-        nullable = false,
-        foreignKey = @ForeignKey(name = "FK_notificacion_usuarios")
-    )
+    @JoinColumn(name = "id_usuario", nullable = false, foreignKey = @ForeignKey(name = "FK_notificacion_usuarios"))
     private UsuarioEntity usuario;
 
 }
