@@ -80,9 +80,6 @@ public class ConfirmarPedidoAdminServiceImpl implements ConfirmarPedidoAdminServ
                                                  confirmarPedidoDTO.getFechaInicio(), 
                                                  confirmarPedidoDTO.getFechaFin());
         
-        // Despublicar todos los menús que estaban publicados
-        despublicarTodosLosMenus();
-        
         // Despublicar todos los menu-platos que estaban publicados
         despublicarTodosLosMenuPlatos();
         
@@ -153,17 +150,6 @@ public class ConfirmarPedidoAdminServiceImpl implements ConfirmarPedidoAdminServ
             
         } catch (IOException e) {
             throw new RuntimeException("Error al generar archivo de resumen: " + e.getMessage());
-        }
-    }
-    
-    private void despublicarTodosLosMenus() {
-        // Buscar todos los menús que están publicados
-        List<MenuDiaEntity> menusPublicados = menuDiaRepository.findAllByPublicadoTrue();
-        
-        // Marcar como no publicados
-        for (MenuDiaEntity menu : menusPublicados) {
-            menu.setPublicado(false);
-            menuDiaRepository.save(menu);
         }
     }
     
