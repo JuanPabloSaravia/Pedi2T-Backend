@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class PlatoAdminDTO {
     private Long idPlato;
+    private Long idMenuPlato; // ID del MenuPlatosEntity
     private String nombre;
     private String descripcion;
     private String imagenUrl;
