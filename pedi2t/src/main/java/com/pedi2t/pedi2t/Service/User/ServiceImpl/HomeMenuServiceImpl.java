@@ -16,6 +16,7 @@ import com.pedi2t.pedi2t.Service.User.HomeMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -86,8 +87,10 @@ public class HomeMenuServiceImpl implements HomeMenuService {
     }
 
     private MenuDiaDTO convertirAMenuDiaDTO(MenuDiaEntity menuDia) {
-        List<MenuPlatosEntity> menuPlatos = menuPlatosRepository.findByMenuDiaId(menuDia.getId());
-        List<PlatoDTO> platos = menuPlatos.stream()
+        // Obtener directamente solo los platos publicados desde el repository
+        List<MenuPlatosEntity> menuPlatosPublicados = menuPlatosRepository.findByMenuDiaIdAndPublicadoTrue(menuDia.getId());
+        
+        List<PlatoDTO> platos = menuPlatosPublicados.stream()
             .map(this::convertirAPlatoDTO)
             .collect(Collectors.toList());
 
