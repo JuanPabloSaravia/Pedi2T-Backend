@@ -67,8 +67,8 @@ public class HomeAdminServiceImpl implements HomeAdminService {
 
         return new MenuDiaAdminDTO(
             menuDia.getId(), 
-            menuDia.getFecha().toString(), 
             menuDia.getDescripcion(), 
+            menuDia.getDiaSemana(),
             platos
         );
     }
@@ -77,6 +77,7 @@ public class HomeAdminServiceImpl implements HomeAdminService {
         PlatoEntity plato = menuPlatos.getPlato();
         PlatoAdminDTO dto = new PlatoAdminDTO();
         dto.setIdPlato(plato.getId());
+        dto.setIdMenuPlato(menuPlatos.getId()); // Agregar el ID del MenuPlatosEntity
         dto.setNombre(plato.getNombre());
         dto.setDescripcion(plato.getDescripcion());
         dto.setImagenUrl(plato.getImagenUrl());

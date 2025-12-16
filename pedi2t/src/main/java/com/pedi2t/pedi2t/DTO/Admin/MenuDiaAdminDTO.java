@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MenuDiaAdminDTO {
     private Long id;
-    private String fecha; // ISO string
     private String descripcion;
+    private String diaSemana;
     private List<PlatoAdminDTO> platos;
 }

@@ -13,6 +13,7 @@ import com.pedi2t.pedi2t.Service.Admin.EntregarPedidosAdminService;
 import com.pedi2t.pedi2t.Service.Admin.HomeAdminService;
 import com.pedi2t.pedi2t.Service.Admin.PlatoAdminService;
 import com.pedi2t.pedi2t.Service.Admin.PlatosPedidosAdminService;
+import com.pedi2t.pedi2t.Service.Admin.PublicarPlatoAdminService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,9 @@ public class AdminController {
     
     @Autowired
     private PlatosPedidosAdminService platosPedidosAdminService;
+    
+    @Autowired
+    private PublicarPlatoAdminService publicarPlatoAdminService;
     
     @PostMapping("/cargarPlatos")
     public ResponseEntity<?> cargarPlatos(
@@ -165,6 +169,78 @@ public class AdminController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PutMapping("/republicarPlato/{usuarioId}/{menuPlatoId}")
+    public ResponseEntity<?> republicarPlato(@PathVariable Long usuarioId, @PathVariable Long menuPlatoId) {
+        try {
+            publicarPlatoAdminService.republicarPlato(usuarioId, menuPlatoId);
+            return ResponseEntity.ok()
+                .body("Plato republicado exitosamente");
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("No tiene permisos para esta acción");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error interno del servidor");
+        }
+    }
+    
+    @PutMapping("/republicarTodos/{usuarioId}")
+    public ResponseEntity<?> republicarTodosLosPlatos(@PathVariable Long usuarioId) {
+        try {
+            publicarPlatoAdminService.republicarTodosLosPlatos(usuarioId);
+            return ResponseEntity.ok()
+                .body("Todos los platos han sido republicados exitosamente");
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("No tiene permisos para esta acción");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error interno del servidor");
+        }
+    }
+    
+    @PutMapping("/despublicarPlato/{usuarioId}/{menuPlatoId}")
+    public ResponseEntity<?> despublicarPlato(@PathVariable Long usuarioId, @PathVariable Long menuPlatoId) {
+        try {
+            publicarPlatoAdminService.despublicarPlato(usuarioId, menuPlatoId);
+            return ResponseEntity.ok()
+                .body("Plato despublicado exitosamente");
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("No tiene permisos para esta acción");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error interno del servidor");
+        }
+    }
+    
+    @PutMapping("/despublicarTodos/{usuarioId}")
+    public ResponseEntity<?> despublicarTodosLosPlatos(@PathVariable Long usuarioId) {
+        try {
+            publicarPlatoAdminService.despublicarTodosLosPlatos(usuarioId);
+            return ResponseEntity.ok()
+                .body("Todos los platos han sido despublicados exitosamente");
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("No tiene permisos para esta acción");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error interno del servidor");
         }
     }
 }
